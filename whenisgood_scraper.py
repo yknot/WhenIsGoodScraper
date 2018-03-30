@@ -12,7 +12,7 @@ response_code = sys.argv[2]
 # get results page
 r = requests.get('http://whenisgood.net/{}/results/{}'.format(event_id,
                                                               response_code))
-soup = BeautifulSoup(r.text)
+soup = BeautifulSoup(r.text, "html.parser")
 # get the script at the bottom
 raw = soup.find_all('script')[-1].text.splitlines()
 # filter out beginning and end rows
