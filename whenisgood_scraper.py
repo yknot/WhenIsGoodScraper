@@ -32,4 +32,43 @@ for r in results:
         # convert to datetime and add to dict
         for a in available.split(','):
             a_dt = datetime.fromtimestamp(int(a) / 1000, timezone.utc)
-            events[a_dt].append(person)
+            wday = a_dt.weekday() + 1
+            if wday == 7:
+                wday = 0
+            key = (wday, a_dt.hour)
+            events[key].append(person)
+
+# headers
+days = ['Sunday', 'Monday', 'Tuesday',
+        'Wednesday', 'Thursday', 'Friday', 'Saturday']
+print('{: <5}'.format(''), end="")
+for d in days:
+    print('{: <20}'.format(d), end='')
+print()
+print()
+
+# get limits
+min_hour = min(h for d, h in events.keys())
+max_hour = max(h for d, h in events.keys())
+
+# print out calendar
+for hour in range(min_hour, max_hour + 1):
+    print('{: <5}'.format(hour), end="")
+    idx = 0
+    while True:
+        found = False
+        if idx:
+            print('{: <5}'.format(''), end="")
+        for day in range(7):
+            if (day, hour) in events and len(events[(day, hour)]) > idx:
+                if len(events[(day, hour)]) - 1 > idx:
+                    found = True
+                print('{: <20}'.format(events[(day, hour)][idx]), end="")
+            else:
+                print('{: <20}'.format(''), end="")
+        print()
+        if not found:
+            break
+        idx += 1
+
+    print('-' * (5 + 20 * 7))
